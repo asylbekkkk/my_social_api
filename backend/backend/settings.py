@@ -75,12 +75,20 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+DATABASE_URL = os.environ.get('DATABASE_URL')
 
-DATABASES = {
-
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL')
-    )
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(default=DATABASE_URL)
+    }
+else:
+    # Егер DATABASE_URL табылмаса, локальді SQLite-ты қолдана тұру (уақытша қате шықпас үшін)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
     #'default': {
      #   'ENGINE': 'django.db.backends.postgresql',
       #  'NAME': 'my_django_db',  # 2-қадамда қойған атың
@@ -88,8 +96,6 @@ DATABASES = {
         #'PASSWORD': 'asyl2358', # pgAdmin-ге кіргендегі пароль
         #'HOST': '127.0.0.1',
         #'PORT': '5432',
-    
-}
 
 
 # Password validation
